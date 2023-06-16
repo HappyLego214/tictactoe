@@ -1,0 +1,31 @@
+div {
+    border: 1px solid black;
+}
+
+.main-container {
+    display: grid;
+    grid-template-rows: 100px 8fr 1fr;
+    
+    width: 100dvw;
+    height: 100dvh;
+}
+
+.body-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gameboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: 750px;
+    width: 750px;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
