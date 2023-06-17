@@ -14,36 +14,41 @@ const startGame = (() => {
            let ex = x.forEach(x => {
                 let re = y.forEach(y => {
                      arr.push(x + y);
-                })
+                });
            }); 
         for(let i = 0; i < 3; i++) {
             arr.push(arr.splice(0, 3));
         }
-        console.log(arr);
+
+        return arr;
+
         }
+
     }
 
     function _startRound(player1, player2) {
         let picker = true;
+        console.log(gameboard.arr);
         for(let i = 0; i < 9; i++) {
             if (picker == true) {
-                const location = prompt(`${player1} | Place Your Marker: `);
-                console.log(`${player1} | Marker Placed At ${location}`);
+                let name = player1.getName();
+                const location = prompt(`${name} | Place Your Marker: `);
+                console.log(`${name} | Marker Placed At ${location}`);
+                player1.markGrid(location);
                 picker = false;
             } else {
-                const location = prompt(`${player2} | Place Your Marker: `);
-                console.log(`${player2} | Marker Placed At ${location}`);
+                let name = player2.getName();
+                const location = prompt(`${name} | Place Your Marker: `);
+                console.log(`${name} | Marker Placed At ${location}`);
+                player2.markGrid(location);
                 picker = true;
             }
-            console.log(picker);
         }
     }
 
-    // function _checkEach(arr) {
-    //     arr.forEach(item => {
-    //         console.log(item);
-    //     });
-    // }
+    function _winConditions(arr) {
+
+    }   
 
     return {
         displayBoard: function() {
@@ -51,21 +56,32 @@ const startGame = (() => {
         },
 
         checkFunction: function() {
-            _startRound(player1.getName(), player2.getName());
+            _startRound(player1, player2);
         }
     }
 
 })();
 
-const playerFactory = (name, score) => {
+const playerFactory = (name, score, arr) => {
+    let playerMark = [[],[],[]];
+    const markGrid = location => {
+        if (location <= 3) {
+            console.log(playerMark[0])
+        } else if (location <= 6) {
+            console.log(playerMark[1])
+        } else if (location <= 9) {
+            console.log(playerMark[2])
+        }
+    }
     const getName = () => name;
     const getScore = () => score;
-    return {getName, getScore};
+    return {getName, getScore, markGrid, playerMark};
 }
 
 const player1 = playerFactory('Player-1');
 const player2 = playerFactory('Player-2')
 
 
+// player1.getName();
 startGame.displayBoard();
-// startGame.checkFunction();
+startGame.checkFunction(player1, player2);
