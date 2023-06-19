@@ -25,18 +25,18 @@ const startGame = (() => {
         }
     }
 
-    function _markGrid(location, arr, player, avail) {
+    function _markGrid(location, arr, player, comp, avail) {
         if (location <= 3) {
-            let target = arr[1][location - 1];
+            let target = arr[0][location - 1];
             let hit = player.playerMark[0];
-            if (hit.length >= 3) {
+            let check = comp.playerMark[0];
+
+            if (hit.length >= 3 || check.includes(target) || hit.includes(target)) {
                 console.log('Slot Already Marked')
                return avail = true;
-            } else {
-                console.log(target);
 
+            } else {
                 hit.push(target);
-    
                 console.log(hit);
                 return avail = false;
             }
@@ -44,38 +44,38 @@ const startGame = (() => {
         } else if (location <= 6 && location > 3) {
             let target = arr[1][location - 4];
             let hit = player.playerMark[1];
-            if (hit.length >= 3) {
+            let check = comp.playerMark[1];
+
+            if (hit.length >= 3 || check.includes(target) || hit.includes(target)) {
                 console.log('Slot Already Marked')
                 return avail = true;
-            } else {
-                console.log(target);
 
+            } else {
                 hit.push(target);
-    
                 console.log(hit);
                 return avail = false;
             }
 
         } else if (location <= 9 && location > 6) {
-            let target = arr[1][location - 7];
+            let target = arr[2][location - 7];
             let hit = player.playerMark[2];
-            if (hit.length >= 3) {
+            let check = comp.playerMark[2];
+            
+            if (hit.length >= 3 || check.includes(target) || hit.includes(target)) {
                 console.log('Slot Already Marked')
                 return avail = true;
-            } else {
-                console.log(target);
 
+            } else {
                 hit.push(target);
-    
                 console.log(hit);
                 return avail = false;
             }
-
+    
         } else {
             console.log('Error!');
+            return avail = true;
         }
     }
-
 
     function _startRound(player1, player2) {
         let picker = true;
@@ -87,16 +87,17 @@ const startGame = (() => {
                     let name = player1.getName();
                     const location = prompt(`${name} | Place Your Marker: `);
                     console.log(`${name} | Marker Placed At ${location}`);
-                    avail = _markGrid(location, arrRound, player1, avail);
+                    avail = _markGrid(location, arrRound, player1, player2, avail);
                     console.log(avail);
                 } while (avail == true);
                 picker = false;
+
             } else {
                 do {
                     let name = player2.getName();
                     const location = prompt(`${name} | Place Your Marker: `);
                     console.log(`${name} | Marker Placed At ${location}`);
-                    _markGrid(location, arrRound, player2);
+                    avail = _markGrid(location, arrRound, player2, player1, avail);
                     console.log(avail);
                 } while (avail == true);
                 picker = true;
