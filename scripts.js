@@ -37,7 +37,7 @@ const startGame = (() => {
 
             } else {
                 hit.push(target);
-                console.log(hit);
+                hit.sort(function(a,b){return a - b})
                 return avail = false;
             }
 
@@ -52,7 +52,7 @@ const startGame = (() => {
 
             } else {
                 hit.push(target);
-                console.log(hit);
+                hit.sort(function(a,b){return a - b})
                 return avail = false;
             }
 
@@ -67,7 +67,7 @@ const startGame = (() => {
 
             } else {
                 hit.push(target);
-                console.log(hit);
+                hit.sort(function(a,b){return a - b})
                 return avail = false;
             }
     
@@ -77,28 +77,65 @@ const startGame = (() => {
         }
     }
 
+    function _winConditions(player, checkWin) {
+       let curr = player.playerMark;
+       if (curr[0].length == 3  || curr[1].length == 3 || curr[2].length == 3) {
+        return checkWin = true;
+       } else if (curr[0][0] == true && curr[1][0] == true && curr[2][0] == true) {
+        return checkWin = true;
+       }
+    }
+
     function _startRound(player1, player2) {
         let picker = true;
+        let checkWin = false;
         let avail = true;
         let arrRound = gameboard.arr;
-        for(let i = 0; i < 9; i++) {
+
+        for (let i = 0; i < 9; i++) {
             if (picker == true) {
                 do {
                     let name = player1.getName();
+
                     const location = prompt(`${name} | Place Your Marker: `);
                     console.log(`${name} | Marker Placed At ${location}`);
+
                     avail = _markGrid(location, arrRound, player1, player2, avail);
-                    console.log(avail);
+                    checkWin = _winConditions(player1, checkWin);
+                    console.log(player1.playerMark)
+                    console.log(checkWin);
+
+                        if (checkWin == true) {
+                            i = 10;
+                            console.log('You Won The Game!');
+                            player1.playerScore = 1;
+                            console.log(player1.playerScore)
+                            checkWin = false;
+                        } 
+
                 } while (avail == true);
                 picker = false;
 
             } else {
-                do {
+                do {                    
                     let name = player2.getName();
+
                     const location = prompt(`${name} | Place Your Marker: `);
                     console.log(`${name} | Marker Placed At ${location}`);
+
                     avail = _markGrid(location, arrRound, player2, player1, avail);
-                    console.log(avail);
+
+                    checkWin = _winConditions(player2, checkWin);
+                    console.log(player2.playerMark)
+                    console.log(checkWin);
+
+                    if (checkWin == true) {
+                        i = 10;
+                        console.log('You Won The Game!');
+                        player2.playerScore = 1;
+                        console.log(player2.playerScore)
+                    }
+
                 } while (avail == true);
                 picker = true;
             }
@@ -118,6 +155,7 @@ const startGame = (() => {
 })();
 
 const playerFactory = (name, score) => {
+    const playerScore = 0;
     const playerMark = [[],[],[]];
     const getName = () => name;
     const getScore = () => score;
