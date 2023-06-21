@@ -79,11 +79,27 @@ const startGame = (() => {
 
     function _winConditions(player, checkWin) {
        let curr = player.playerMark;
+       let test = [];
        if (curr[0].length == 3  || curr[1].length == 3 || curr[2].length == 3) {
         return checkWin = true;
-       } else if (curr[0][0] == true && curr[1][0] == true && curr[2][0] == true) {
+       } else if (_checkSeq(curr, 0) == true || _checkSeq(curr, 1) == true || _checkSeq(curr, 2) == true) {
         return checkWin = true;
+       } else {
+        return checkWin = false;
        }
+    }
+
+    function _checkSeq(arr, loc) {
+        let sequence = [];
+        arr.forEach(element => {
+            sequence.push(element[loc]);
+        });
+
+        for(let i = 1; i < sequence.length; i++)
+            if(sequence[i] != sequence[i-1] + 1) {
+                return false;
+            } 
+        return true;
     }
 
     function _startRound(player1, player2) {
