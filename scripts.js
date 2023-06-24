@@ -80,13 +80,21 @@ const startGame = (() => {
     function _winConditions(player, checkWin) {
        let curr = player.playerMark;
        let test = [];
-       if (curr[0].length == 3  || curr[1].length == 3 || curr[2].length == 3) {
-        return checkWin = true;
-       } else if (_checkSeq(curr, 0) == true || _checkSeq(curr, 1) == true || _checkSeq(curr, 2) == true) {
-        return checkWin = true;
-       } else {
-        return checkWin = false;
-       }
+        if (curr[0].length == 3  || curr[1].length == 3 || curr[2].length == 3) {
+            console.log('Sequential Row')
+            return checkWin = true;
+
+        } else if (_checkSeq(curr, 0) == true || _checkSeq(curr, 1) == true || _checkSeq(curr, 2) == true) {
+            console.log('Sequential Column')
+            return checkWin = true;
+
+        } else if (_checkDgSeq(curr, 2, 0) == true || _checkDgSeq(curr, 0, 2) == true) {
+            console.log('Divisible Diagonal')
+            return checkWin = true;
+        } else {
+            console.log('Error');
+            return checkWin = false;
+}
     }
 
     function _checkSeq(arr, loc) {
@@ -94,13 +102,31 @@ const startGame = (() => {
         arr.forEach(element => {
             sequence.push(element[loc]);
         });
-
+        
         for(let i = 1; i < sequence.length; i++)
             if(sequence[i] != sequence[i-1] + 1) {
                 return false;
-            } 
+            }
+
         return true;
     }
+
+    function _checkDgSeq(arr, indStart, indInc) {
+
+        let seq = [];
+        let firstCheck = [2,2,2];
+        let secondCheck = [0,2,4]
+        let index = indStart;
+        
+                arr.forEach(element => {
+                        seq.push(element.find(item => item == index));
+                        index += indInc;
+
+                });
+
+        return seq.every(item => firstCheck.includes(item) || secondCheck.includes(item));
+
+     }
 
     function _startRound(player1, player2) {
         let picker = true;
