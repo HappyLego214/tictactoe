@@ -114,8 +114,6 @@ const startGame = (() => {
     function _checkDgSeq(arr, indStart, indInc) {
 
         let seq = [];
-        let firstCheck = [2,2,2];
-        let secondCheck = [0,2,4]
         let index = indStart;
         
                 arr.forEach(element => {
@@ -124,7 +122,7 @@ const startGame = (() => {
 
                 });
 
-        return seq.every(item => firstCheck.includes(item) || secondCheck.includes(item));
+        return seq.every(item => [2,2,2].includes(item) || [0,2,4].includes(item));
 
      }
 
