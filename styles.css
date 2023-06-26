@@ -4,11 +4,32 @@ div {
 
 .main-container {
     display: grid;
-    grid-template-rows: 100px 8fr 1fr;
+    grid-template-rows: 150px 8fr 1fr;
     
-    width: 100dvw;
-    height: 100dvh;
+    min-width: fit-content;
+    min-height: 100dvh;
 }
+
+.header-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-container {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    align-items: center;
+    height: 100px;
+    width: 50em;
+}
+
+.menu-container button {
+    height: 65px;
+    width: 150px;
+}
+
 
 .body-container {
     display: flex;
@@ -20,11 +41,11 @@ div {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
-    height: 750px;
-    width: 750px;
+    height: 35em;
+    width: 35em;
 }
 
-.cell {
+.cellblock {
     display: flex;
     justify-content: center;
     align-items: center;
