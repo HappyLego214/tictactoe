@@ -1,3 +1,5 @@
+// TODO: STOP GAMEBOARD EVENTLISTENER ONCE WIN CONDITION IS SET
+
 const gameboard = document.querySelector('.gameboard');
 const startBtn = document.querySelector('#startBtn');
 const resetBtn = document.querySelector('#resetBtn');
@@ -167,7 +169,7 @@ const gameLogic = (() => {
                                 console.log('You Won The Game!');
                                 inGame = false;
                                 return player1.playerScore = 1;
-                            } else if (_checkTie() == 8) {
+                            } else if (_checkTie() == 9 && checkWin == false) {
                                 console.log('Tie!');
                                 inGame = false;
                                 return;
@@ -189,7 +191,7 @@ const gameLogic = (() => {
                                 console.log('You Won The Game!');
                                 inGame = false;
                                 return player2.playerScore = 1;
-                            } else if (_checkTie() == 8) {
+                            } else if (_checkTie() == 9 && checkWin == false) {
                                 console.log('Tie!');
                                 inGame = false;
                                 return;
