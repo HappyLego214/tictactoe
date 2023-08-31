@@ -1,12 +1,12 @@
 // TODO: STOP GAMEBOARD EVENTLISTENER ONCE WIN CONDITION IS SET // FIXED
 
-// const gameboard = document.querySelector('.gameboard');
-// const startBtn = document.querySelector('#startBtn');
-// const resetBtn = document.querySelector('#resetBtn');
-// const cellblock = document.querySelectorAll('.cellblock');
-// const firstScore = document.querySelector('#firstScore');
-// const secondScore = document.querySelector('#secondScore');
-// const results = document.querySelector('.results');
+const gameboard = document.querySelector('.gameboard');
+const startBtn = document.querySelector('#startBtn');
+const resetBtn = document.querySelector('#resetBtn');
+const cellblock = document.querySelectorAll('.cellblock');
+const firstScore = document.querySelector('#firstScore');
+const secondScore = document.querySelector('#secondScore');
+const results = document.querySelector('.results');
 
 // let inGame = false;
 
@@ -15,7 +15,7 @@ const gameLogic = (() => {
     let gameBoard = {
         createBoard: function() {
             let arr = [
-                [0,1,2], 
+                ["X",1,2], 
                 [3,4,5], 
                 [6,7,8]
             ];
@@ -25,20 +25,51 @@ const gameLogic = (() => {
 
     function _startRound(player1, player2, gameBoard) {
         let playerTurn = true;
-        for(i = 0; i < 9; i++) {
-            if (playerTurn == true)
-            {
-                console.log("check-1")
-                playerTurn = false;
-            } else {
-                console.log("check-2")
-                playerTurn = true;
-            }
-        }
-        _checkWinning(gameBoard)
+        let totalTurns = 0;
+
+        let gameEnd = false;
+        let markAvail = false;
+        cellblock.forEach((cell => {
+            cell.addEventListener('click', () => {
+                if (playerTurn == true) {
+                    do {
+                        markAvail = _checkAvail(gameBoard, cell);
+                        gameEnd = _checkWinning(gameBoard);
+                        playerTurn = false;
+                        totalTurns++;
+    
+                        console.log(markAvail);
+                        console.log(gameEnd);
+                        console.log("Player 1");
+                        console.log(totalTurns);
+                    } while (markAvail == false);
+                } else {
+                    do {
+                        gameEnd = _checkWinning(gameBoard, cell)
+                        playerTurn = true;
+                        totalTurns++;
+    
+                        console.log(gameEnd);
+                        console.log("Player 2");
+                        console.log(totalTurns);
+                    } while (markAvail == false);
+                }
+            })
+        }));
     }
 
-    function _checkAvail(gameBoard) {
+    function _checkAvail(gameBoard, cell) {
+        let check = 0;
+        console.log(cell.dataset.location);
+        for (i = 0; i < 3; i++) {
+            check = gameBoard[i].findIndex(item => item == cell.dataset.location);
+            console.log(check);
+            if (check != -1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     function _checkWinning(gameBoard) {
@@ -46,6 +77,7 @@ const gameLogic = (() => {
         for (i = 0; i < 3; i++) {
             if (gameBoard[i][0] == gameBoard[i][1] && gameBoard[i][1] == gameBoard[i][2]) {
                 console.log("sequence check - horizontal");
+                return true;
             } else {
                 console.log("sequence fail - horizontal");
             }
@@ -55,6 +87,7 @@ const gameLogic = (() => {
         for (i = 0; i < 3; i++) {
             if (gameBoard[0][i] == gameBoard[1][i] && gameBoard[1][i] == gameBoard[2][i]) {
                 console.log("sequence check - vertical")
+                return true;
             } else {
                 console.log("sequence fail - vertical")
             }
@@ -63,6 +96,7 @@ const gameLogic = (() => {
         // Checking Diagonal 
         if (gameBoard[0][0] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][2]) {
             console.log("sequence check - diagonal")
+            return true;
         } else {
             console.log("sequence fail - diagonal")
         }
@@ -70,9 +104,12 @@ const gameLogic = (() => {
         // Checking Diagonal Reverse
         if (gameBoard[0][2] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][0]) {
             console.log("sequence check - diagonal reverse")
+            return true;
         } else {
             console.log("sequence fail - diagonal reverse")
         }
+
+        return false;
     }
 
     return {
