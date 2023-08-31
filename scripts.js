@@ -15,7 +15,7 @@ const gameLogic = (() => {
     let gameBoard = {
         createBoard: function() {
             let arr = [
-                ["X",1,2], 
+                [0,1,2], 
                 [3,4,5], 
                 [6,7,8]
             ];
@@ -32,20 +32,30 @@ const gameLogic = (() => {
         cellblock.forEach((cell => {
             cell.addEventListener('click', () => {
                 if (playerTurn == true) {
-                        markAvail = _checkAvail(gameBoard, cell);
+                        markAvail = _checkAvail(playerTurn, gameBoard, cell);
                         gameEnd = _checkWinning(gameBoard);
-                        playerTurn = false;
                         totalTurns++;
+
+                    if (markAvail == true) {
+                        cell.textContent = "X";
+                        playerTurn = false;
+                    }
     
                         console.log(markAvail);
                         console.log(gameEnd);
                         console.log("Player 1");
                         console.log(totalTurns);
                 } else {
-                        gameEnd = _checkWinning(gameBoard, cell)
-                        playerTurn = true;
+                        markAvail = _checkAvail(playerTurn, gameBoard, cell);
+                        gameEnd = _checkWinning(gameBoard);
                         totalTurns++;
-    
+
+                        if (markAvail == true) {
+                            cell.textContent = "O";
+                            playerTurn = true;
+                        }
+                        
+                        console.log(markAvail);
                         console.log(gameEnd);
                         console.log("Player 2");
                         console.log(totalTurns);
@@ -54,15 +64,18 @@ const gameLogic = (() => {
         }));
     }
 
-    function _checkAvail(gameBoard, cell) {
+    function _checkAvail(playerTurn, gameBoard, cell) {
         let check = 0;
-        console.log(cell.dataset.location);
         for (i = 0; i < 3; i++) {
             check = gameBoard[i].findIndex(item => item == cell.dataset.location);
-            console.log(check);
             if (check != -1) {
+                if (playerTurn == true) {
+                    gameBoard[i][check] = "X";
+                } else {
+                    gameBoard[i][check] = "O";
+                }
                 return true;
-            }
+            } 
         }
 
         return false;
@@ -82,27 +95,27 @@ const gameLogic = (() => {
         // Checking Vertical Columns
         for (i = 0; i < 3; i++) {
             if (gameBoard[0][i] == gameBoard[1][i] && gameBoard[1][i] == gameBoard[2][i]) {
-                console.log("sequence check - vertical")
+                // console.log("sequence check - vertical")
                 return true;
             } else {
-                console.log("sequence fail - vertical")
+                // console.log("sequence fail - vertical")
             }
         }
 
         // Checking Diagonal 
         if (gameBoard[0][0] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][2]) {
-            console.log("sequence check - diagonal")
+            // console.log("sequence check - diagonal")
             return true;
         } else {
-            console.log("sequence fail - diagonal")
+            // console.log("sequence fail - diagonal")
         }
 
         // Checking Diagonal Reverse
         if (gameBoard[0][2] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][0]) {
-            console.log("sequence check - diagonal reverse")
+            // console.log("sequence check - diagonal reverse")
             return true;
         } else {
-            console.log("sequence fail - diagonal reverse")
+            // console.log("sequence fail - diagonal reverse")
         }
 
         return false;
