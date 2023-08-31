@@ -4,8 +4,8 @@ div {
 
 .main-container {
     display: grid;
-    grid-template-rows: 150px 8fr 1fr;
-    
+    grid-template-rows: 
+    250px 8fr 1fr;
     min-width: fit-content;
     min-height: 100dvh;
 }
@@ -14,6 +14,8 @@ div {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    gap: 25px;
 }
 
 .menu-container {
@@ -30,6 +32,35 @@ div {
     width: 150px;
 }
 
+.results-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.scoreboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.results {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 30px;
+    min-width: 100px;
+}
 
 .body-container {
     display: flex;
