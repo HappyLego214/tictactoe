@@ -32,7 +32,6 @@ const gameLogic = (() => {
         cellblock.forEach((cell => {
             cell.addEventListener('click', () => {
                 if (playerTurn == true) {
-                    do {
                         markAvail = _checkAvail(gameBoard, cell);
                         gameEnd = _checkWinning(gameBoard);
                         playerTurn = false;
@@ -42,9 +41,7 @@ const gameLogic = (() => {
                         console.log(gameEnd);
                         console.log("Player 1");
                         console.log(totalTurns);
-                    } while (markAvail == false);
                 } else {
-                    do {
                         gameEnd = _checkWinning(gameBoard, cell)
                         playerTurn = true;
                         totalTurns++;
@@ -52,7 +49,6 @@ const gameLogic = (() => {
                         console.log(gameEnd);
                         console.log("Player 2");
                         console.log(totalTurns);
-                    } while (markAvail == false);
                 }
             })
         }));
