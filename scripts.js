@@ -12,7 +12,7 @@ let inGame = false;
 
 const gameLogic = (() => {
 
-    let gameBoard = {
+    const gameBoard = {
         createBoard: function() {
             let arr = [
                 [0,1,2], 
@@ -32,29 +32,31 @@ const gameLogic = (() => {
 
         cellblock.forEach((cell => {
             cell.addEventListener('click', () => {
-                if (playerTurn == true) {
-                        markAvail = _checkAvail(playerTurn, gameBoard, cell);
-                        gameEnd = _checkWinning(gameBoard);
-                        totalTurns++;
+                if (gameEnd == false) {
+                    if (playerTurn == true) {
+                            markAvail = _checkAvail(playerTurn, gameBoard, cell);
+                            gameEnd = _checkWinning(gameBoard);
+                            totalTurns++;
 
-                    if (markAvail == true) {
-                        cell.textContent = "X";
-                        playerTurn = false;
-                    }
+                        if (markAvail == true) {
+                            cell.textContent = "X";
+                            playerTurn = false;
+                        }
 
-                    if (gameEnd == true) {
-                        console.log("Player 1 - Won The Game!");
-                        inGame = false;
-                        return player1.playerScore += 1;
-                    }
 
-                    if (totalTurns == 8) {
-                        inGame = false;
-                        return;
-                    }
-    
+                        if (gameEnd == true) {
+                            console.log("Player 1 - Won The Game!");
+                            inGame = false;
+                            return player1.playerScore++;
 
-                } else {
+                        }
+                    
+                        if (totalTurns == 9 && gameEnd == false) {
+                            console.log("It's a Tie!");
+                            inGame = false;
+                            return;
+                        }
+                    } else {
                         markAvail = _checkAvail(playerTurn, gameBoard, cell);
                         gameEnd = _checkWinning(gameBoard);
                         totalTurns++;
@@ -67,14 +69,16 @@ const gameLogic = (() => {
                         if (gameEnd == true) {
                             console.log("Player 2 - Won The Game!");
                             inGame = false;
-                            return player2.playerScore += 1;
+                            return player2.playerScore++;
+
                         }
 
-                        if (totalTurns == 8) {
+                        if (totalTurns == 9 && gameEnd == false) {
+                            console.log("It's a Tie!");
                             inGame = false;
                             return;
                         }
-                        
+                    }
                 }
             }, {once: true});
         }));
@@ -101,7 +105,6 @@ const gameLogic = (() => {
         // Checking Sequential Rows
         for (i = 0; i < 3; i++) {
             if (gameBoard[i][0] == gameBoard[i][1] && gameBoard[i][1] == gameBoard[i][2]) {
-                // console.log("sequence check - horizontal");
                 return true;
             } 
         }
@@ -109,20 +112,17 @@ const gameLogic = (() => {
         // Checking Vertical Columns
         for (i = 0; i < 3; i++) {
             if (gameBoard[0][i] == gameBoard[1][i] && gameBoard[1][i] == gameBoard[2][i]) {
-                // console.log("sequence check - vertical")
                 return true;
             } 
         }
 
         // Checking Diagonal 
         if (gameBoard[0][0] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][2]) {
-            // console.log("sequence check - diagonal")
             return true;
         } 
 
         // Checking Diagonal Reverse
         if (gameBoard[0][2] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][0]) {
-            // console.log("sequence check - diagonal reverse")
             return true;
         } 
 
@@ -132,6 +132,12 @@ const gameLogic = (() => {
     return {
         startGame: function() {
             _startRound(player1, player2, gameBoard.createBoard())
+        },
+
+        resetBoard: function() {
+            cellblock.forEach((cell => {
+                cell.textContent = "";
+            }))
         }
     };
 })();
@@ -140,6 +146,7 @@ const gameLogic = (() => {
 startBtn.addEventListener('click', () => {
     if (inGame == false) {
         gameLogic.startGame(player1, player2);
+        gameLogic.resetBoard();
     } else {
         console.log("Game Is Ongoing");
     }
@@ -150,7 +157,7 @@ const playerFactory = (name, score) => {
     const playerScore = 0;
     const getName = () => name;
     const getScore = () => score;
-    return {getName, getScore}
+    return {getName, getScore, playerScore}
 }
 
 const player1 = playerFactory('Player-1');
