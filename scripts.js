@@ -43,19 +43,18 @@ const gameLogic = (() => {
                             playerTurn = false;
                         }
 
-
                         if (gameEnd == true) {
-                            console.log("Player 1 - Won The Game!");
                             inGame = false;
-                            return player1.playerScore++;
-
+                            player1.playerScore++;
+                            results.textContent = "Player 1 Won The Game!"
+                            _updateScoreBoard(player1, player2)
                         }
                     
                         if (totalTurns == 9 && gameEnd == false) {
-                            console.log("It's a Tie!");
                             inGame = false;
-                            return;
+                            results.textContent = "It's a Tie!"
                         }
+
                     } else {
                         markAvail = _checkAvail(playerTurn, gameBoard, cell);
                         gameEnd = _checkWinning(gameBoard);
@@ -67,21 +66,22 @@ const gameLogic = (() => {
                         }
 
                         if (gameEnd == true) {
-                            console.log("Player 2 - Won The Game!");
                             inGame = false;
-                            return player2.playerScore++;
-
+                            player2.playerScore++;
+                            results.textContent = "Player 2 Won The Game!"
+                            _updateScoreBoard(player1, player2)
                         }
 
                         if (totalTurns == 9 && gameEnd == false) {
-                            console.log("It's a Tie!");
                             inGame = false;
-                            return;
+                            results.textContent = "It's a Tie!"
                         }
+
                     }
                 }
             }, {once: true});
         }));
+
     } 
 
     function _checkAvail(playerTurn, gameBoard, cell) {
@@ -129,15 +129,31 @@ const gameLogic = (() => {
         return false;
     }
 
-    return {
-        startGame: function() {
-            _startRound(player1, player2, gameBoard.createBoard())
-        },
+    function _updateScoreBoard(player1, player2) {
+        firstScore.textContent = player1.playerScore;
+        secondScore.textContent = player2.playerScore;
+    }
 
-        resetBoard: function() {
+    function _clearBoard() {
+        results.textContent = "";
             cellblock.forEach((cell => {
                 cell.textContent = "";
             }))
+    }
+
+    return {
+        startGame: function() {
+            _startRound(player1, player2, gameBoard.createBoard())
+            _updateScoreBoard(player1, player2);
+        },
+
+        clearBoard: function() {
+            _clearBoard();
+        },
+
+        resetGame: function() {
+            _updateScoreBoard(player1, player2)
+            _clearBoard();
         }
     };
 })();
@@ -146,11 +162,18 @@ const gameLogic = (() => {
 startBtn.addEventListener('click', () => {
     if (inGame == false) {
         gameLogic.startGame(player1, player2);
-        gameLogic.resetBoard();
+        gameLogic.clearBoard();
     } else {
         console.log("Game Is Ongoing");
     }
     inGame = true;
+})
+
+resetBtn.addEventListener('click', () => {
+    inGame = false;
+    player1.playerScore = 0;
+    player2.playerScore = 0;
+    gameLogic.resetGame();
 })
 
 const playerFactory = (name, score) => {
