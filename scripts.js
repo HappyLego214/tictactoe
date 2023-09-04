@@ -90,7 +90,66 @@ const gameLogic = (() => {
                 }
             }, {once: true});
         }));
-    } 
+    }
+
+    function _startRoundAI(player1, computer, gameBoard) {
+        let playerTurn = true;
+        let totalTurns = 0;
+
+        let gameEnd = false;
+        let markAvail = false;
+
+        cellblock.forEach((cell => {
+            cell.addEventListener('click', () => {
+                if (gameEnd == false) {
+                    if (playerTurn == true) {
+                            markAvail = _checkAvail(playerTurn, gameBoard, cell);
+                            gameEnd = _checkWinning(gameBoard);
+                            totalTurns++;
+
+                        if (markAvail == true) {
+                            cell.textContent = "X";
+                            playerTurn = false;
+                        }
+
+                        if (gameEnd == true) {
+                            inGame = false;
+                            player1.playerScore++;
+                            results.textContent = player1.name + " Won The Game!"
+                            _updateScoreBoard(player1, player2)
+                        }
+                    
+                        if (totalTurns == 9 && gameEnd == false) {
+                            inGame = false;
+                            results.textContent = "It's a Tie!"
+                        }
+
+                    } else {
+                        markAvail = _checkAvail(playerTurn, gameBoard, cell);
+                        gameEnd = _checkWinning(gameBoard);
+                        totalTurns++;
+
+                        if (markAvail == true) {
+                            cell.textContent = "O";
+                            playerTurn = true;
+                        }
+
+                        if (gameEnd == true) {
+                            inGame = false;
+                            computer.playerScore++;
+                            results.textContent = computer.name + " Won The Game!"
+                            _updateScoreBoard(player1, computer)
+                        }
+
+                        if (totalTurns == 9 && gameEnd == false) {
+                            inGame = false;
+                            results.textContent = "It's a Tie!"
+                        }
+                    }
+                }
+            }, {once: true});
+        }));
+    }
 
     function _checkAvail(playerTurn, gameBoard, cell) {
         let check = 0;
@@ -167,6 +226,11 @@ const gameLogic = (() => {
             _updateScoreBoard(player1, player2);
         },
 
+        startGameAI: function() {
+            _startRoundAI(player1, computer, gameBoard.createBoard())
+            _updateScoreBoard(player1, computer);
+        },
+
         clearBoard: function() {
             _clearBoard();
         },
@@ -186,8 +250,12 @@ const gameLogic = (() => {
 startBtn.addEventListener('click', () => {
     if (inGame == false) {
         if (computerActive.checked) {
-            inGame = false;
-            gameLogic.startGame(player1, computer)
+            inGame = true;
+            playerNameChange(player1, player1Input, player1Title)
+            player2Title.textContent = computer.name;
+            gameLogic.startGameAI(player1, computer)
+            gameLogic.triggerPlayerSelect();
+            gameLogic.clearBoard();
         } else {
             inGame = true;
             playerNameChange(player1, player1Input, player1Title)
