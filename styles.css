@@ -12,22 +12,31 @@ div {
 
 .header-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
     gap: 25px;
 }
 
 .menu-container {
+    height: 90px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+} 
+
+.game-options {
     display: flex;
     justify-content: center;
-    gap: 50px;
     align-items: center;
-    height: 100px;
-    width: 50em;
+    gap: 50px;
 }
 
-.menu-container button {
+.player-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+}
+
+.game-options button {
     height: 65px;
     width: 150px;
 }

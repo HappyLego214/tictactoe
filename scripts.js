@@ -4,9 +4,18 @@ const gameboard = document.querySelector('.gameboard');
 const startBtn = document.querySelector('#startBtn');
 const resetBtn = document.querySelector('#resetBtn');
 const cellblock = document.querySelectorAll('.cellblock');
-const firstScore = document.querySelector('#firstScore');
-const secondScore = document.querySelector('#secondScore');
+
+const firstScore = document.querySelector('#player1Score');
+const secondScore = document.querySelector('#player2Score');
+
+const player1Title = document.querySelector('#player1Title');
+const player2Title = document.querySelector('#player2Title');
+
 const results = document.querySelector('.results');
+
+const computerActive = document.querySelector('#comp');
+const player1Input = document.querySelector('.player1');
+const player2Input = document.querySelector('.player2');
 
 let inGame = false;
 
@@ -46,7 +55,7 @@ const gameLogic = (() => {
                         if (gameEnd == true) {
                             inGame = false;
                             player1.playerScore++;
-                            results.textContent = "Player 1 Won The Game!"
+                            results.textContent = player1.name + " Won The Game!"
                             _updateScoreBoard(player1, player2)
                         }
                     
@@ -68,7 +77,7 @@ const gameLogic = (() => {
                         if (gameEnd == true) {
                             inGame = false;
                             player2.playerScore++;
-                            results.textContent = "Player 2 Won The Game!"
+                            results.textContent = player2.name + " Won The Game!"
                             _updateScoreBoard(player1, player2)
                         }
 
@@ -81,7 +90,6 @@ const gameLogic = (() => {
                 }
             }, {once: true});
         }));
-
     } 
 
     function _checkAvail(playerTurn, gameBoard, cell) {
@@ -141,6 +149,18 @@ const gameLogic = (() => {
             }))
     }
 
+    function _activePlayerSelect() {
+        if (inGame == true) {
+            computerActive.disabled = true;
+            player1Input.disabled = true;
+            player2Input.disabled = true;
+        } else {
+            computerActive.disabled = false;
+            player1Input.disabled = false;
+            player2Input.disabled = false;
+        }
+    }
+
     return {
         startGame: function() {
             _startRound(player1, player2, gameBoard.createBoard())
@@ -154,6 +174,10 @@ const gameLogic = (() => {
         resetGame: function() {
             _updateScoreBoard(player1, player2)
             _clearBoard();
+        },
+
+        triggerPlayerSelect() {
+            _activePlayerSelect();
         }
     };
 })();
@@ -161,27 +185,46 @@ const gameLogic = (() => {
 
 startBtn.addEventListener('click', () => {
     if (inGame == false) {
-        gameLogic.startGame(player1, player2);
-        gameLogic.clearBoard();
+        if (computerActive.checked) {
+            inGame = false;
+            gameLogic.startGame(player1, computer)
+        } else {
+            inGame = true;
+            playerNameChange(player1, player1Input, player1Title)
+            playerNameChange(player2, player2Input, player2Title)
+            gameLogic.startGame(player1, player2);
+            gameLogic.triggerPlayerSelect();
+            gameLogic.clearBoard();
+        }
     } else {
         console.log("Game Is Ongoing");
     }
-    inGame = true;
-})
+});
+
+function playerNameChange(player, input, title) {
+    if (input.value == "") {
+        return player;
+    } else {
+        player.name = input.value;
+        title.textContent = player.name;
+        return player;
+    }
+}
 
 resetBtn.addEventListener('click', () => {
     inGame = false;
     player1.playerScore = 0;
     player2.playerScore = 0;
     gameLogic.resetGame();
-})
+    gameLogic.triggerPlayerSelect();
+});
 
-const playerFactory = (name, score) => {
+
+const playerFactory = (name) => {
     const playerScore = 0;
-    const getName = () => name;
-    const getScore = () => score;
-    return {getName, getScore, playerScore}
+    return {name, playerScore}
 }
 
-const player1 = playerFactory('Player-1');
-const player2 = playerFactory('Player-2');
+let player1 = playerFactory('Player 1');
+let player2 = playerFactory('Player 2');
+let computer = playerFactory('Computer');
