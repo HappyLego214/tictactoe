@@ -24,8 +24,8 @@ const gameLogic = (() => {
     const gameBoard = {
         createBoard: function() {
             let arr = [
-                ['O',1,2], 
-                ['O',4,5], 
+                [0,1,2], 
+                [3,4,5], 
                 [6,7,8]
             ];
             return arr;
@@ -134,14 +134,14 @@ const gameLogic = (() => {
     }
 
     function _bestAIMove(gameBoard, computer) {
-        let bestScore = -Infinity;
+        let bestScore = -99;
         let move;
         for (let i = 0; i < 3; i ++) {
             for(let j = 0; j < 3; j++) {
                 if(gameBoard[i][j] != 'X' && gameBoard[i][j] != 'O') { 
                     let temp = gameBoard[i][j];
                     gameBoard[i][j] = ai;
-                    let score = _minimax(gameBoard, 0, true);
+                    let score = _minimax(gameBoard, 0, false);
                     gameBoard[i][j] = temp
                     if (score > bestScore) {
                         bestScore = score;
@@ -175,11 +175,11 @@ const gameLogic = (() => {
     function _minimax(gameBoard, depth, isMaximizing) {
         let winning = _checkWinning(gameBoard);
         if (winning != false) {
-            score = _scores(winning)
-            return score
+            let score = _scores(winning)
+            return score;
         }
         
-        if (isMaximizing == true) {
+        if (isMaximizing) {
             let bestScore = 0;
             for (let i = 0; i < 3; i++) {
                 for(let j = 0; j < 3; j++) {
@@ -188,7 +188,7 @@ const gameLogic = (() => {
                         gameBoard[i][j] = ai;
                         let score = _minimax(gameBoard, depth + 1, false);
                         gameBoard[i][j] = temp;
-                        score = Math.max(score, bestScore);
+                        bestScore = Math.max(score, bestScore);
                     }
                 }
             }
@@ -202,7 +202,7 @@ const gameLogic = (() => {
                         gameBoard[i][j] = human;
                         let score = _minimax(gameBoard, depth + 1, true);
                         gameBoard[i][j] = temp;
-                        score = Math.min(score, bestScore);
+                        bestScore = Math.min(score, bestScore);
                     }
                 }
             }
