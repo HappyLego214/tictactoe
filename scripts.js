@@ -32,9 +32,14 @@ const gameLogic = (() => {
         }
     }
 
+    let scores = {
+        X: 1,
+        O: -1,
+        tie: 0,
+    }
+
     function _startRound(player1, player2, gameBoard) {
         let playerTurn = true;
-        let totalTurns = 0;
 
         let gameEnd = false;
         let markAvail = false;
@@ -45,21 +50,21 @@ const gameLogic = (() => {
                     if (playerTurn == true) {
                             markAvail = _checkAvail(playerTurn, gameBoard, cell);
                             gameEnd = _checkWinning(gameBoard);
-                            totalTurns++;
+                            console.log(gameEnd);
 
                         if (markAvail == true) {
                             cell.textContent = "X";
                             playerTurn = false;
                         }
 
-                        if (gameEnd == true) {
+                        if (gameEnd == 'X') {
                             inGame = false;
                             player1.playerScore++;
                             results.textContent = player1.name + " Won The Game!"
                             _updateScoreBoard(player1, player2)
                         }
                     
-                        if (totalTurns == 9 && gameEnd == false) {
+                        if (gameEnd == 'tie') {
                             inGame = false;
                             results.textContent = "It's a Tie!"
                         }
@@ -67,21 +72,20 @@ const gameLogic = (() => {
                     } else {
                         markAvail = _checkAvail(playerTurn, gameBoard, cell);
                         gameEnd = _checkWinning(gameBoard);
-                        totalTurns++;
 
                         if (markAvail == true) {
                             cell.textContent = "O";
                             playerTurn = true;
                         }
 
-                        if (gameEnd == true) {
+                        if (gameEnd == 'O') {
                             inGame = false;
                             player2.playerScore++;
                             results.textContent = player2.name + " Won The Game!"
                             _updateScoreBoard(player1, player2)
                         }
 
-                        if (totalTurns == 9 && gameEnd == false) {
+                        if (gameEnd == 'tie') {
                             inGame = false;
                             results.textContent = "It's a Tie!"
                         }
@@ -94,7 +98,6 @@ const gameLogic = (() => {
 
     function _startRoundAI(player1, computer, gameBoard) {
         let playerTurn = true;
-        let totalTurns = 0;
 
         let gameEnd = false;
         let markAvail = false;
@@ -105,7 +108,6 @@ const gameLogic = (() => {
                     if (playerTurn == true) {
                         markAvail = _checkAvail(playerTurn, gameBoard, cell);
                         gameEnd = _checkWinning(gameBoard);
-                        totalTurns++;
 
                     if (markAvail == true) {
                         cell.textContent = "X";
@@ -120,13 +122,13 @@ const gameLogic = (() => {
                         return gameEnd = true;
                     }
                 
-                    if (totalTurns == 9 && gameEnd == false) {
+                    if (gameEnd == 'tie') {
                         inGame = false;
                         results.textContent = "It's a Tie!"
                         return gameEnd = true;
                     }
 
-                    gameEnd = _AIMove(gameBoard, computer, totalTurns);
+                    gameEnd = _bestAIMove(gameBoard, computer);
                     playerTurn = true;
                     }
                 }
@@ -134,27 +136,68 @@ const gameLogic = (() => {
         }));
     }
 
-    function _AIMove(gameBoard, computer, totalTurns) {
-        let availableMoves = [];
+    function _minimax(gameBoard, depth, isMaximizing) {
+        let winning = _checkWinning(gameBoard);
+        if (winning != false) {
+            return scores[winning];
+        }
+        
+        if (isMaximizing) {
+            let bestScore = -Infinity;
+            for (i = 0; i < 3; i ++) {
+                for(j = 0; j < 3; j++) {
+                    if(gameBoard[i][j] != 'X' && gameBoard[i][j] != 'O') { 
+                        let temp = gameBoard;
+                        temp[i][j] = 'O';
+                        let score = _minimax(temp, depth + 1, false);
+                        score = Math.max(bestScore, score);
+                    }
+                }
+            }
+        return bestScore;
+        } else {
+            let bestScore = Infinity;
+            for (i = 0; i < 3; i ++) {
+                for(j = 0; j < 3; j++) {
+                    if(gameBoard[i][j] != 'X' && gameBoard[i][j] != 'O') { 
+                        let temp = gameBoard;
+                        temp[i][j] = 'X';
+                        let score = _minimax(temp, depth + 1, true);
+                        score = Math.min(score, bestScore);
+                    }
+                }
+            }
+        return bestScore;
+        }
+    }
+
+    function _bestAIMove(gameBoard, computer) {
+        let bestScore = -Infinity;
+        let move;
         for (i = 0; i < 3; i ++) {
             for(j = 0; j < 3; j++) {
-                if(gameBoard[i][j] != 'X' && gameBoard[i][j] != 'O')
-                availableMoves.push({i,j});
+                if(gameBoard[i][j] != 'X' && gameBoard[i][j] != 'O') { 
+                    let temp = gameBoard;
+                    let score = _minimax(temp, 0, true);
+                    if (score > bestScore) {
+                        bestScore = score;
+                        move = {i,j};
+                        }
+                    break
+                }
             }
         }
 
-        if (availableMoves.length == 0 && gameEnd == false) {
-            inGame = false;
-            results.textContent = "It's a Tie!"
-            return true; 
-        }
-        
-        console.log(availableMoves);
-
-        let random = Math.floor(Math.random() * availableMoves.length);
-        let move = availableMoves[random];
         console.log(move);
-        console.log(gameBoard[move.i][move.j]);
+        console.log(bestScore);
+
+        // if (availableMoves.length == 0 && gameEnd == false) {
+        //     inGame = false;
+        //     results.textContent = "It's a Tie!"
+        //     return true; 
+        // }
+        
+        // console.log(gameBoard[move.i][move.j]);
 
         cellblock.forEach((cell => {
             if (gameBoard[move.i][move.j] == cell.dataset.location) {
@@ -165,7 +208,6 @@ const gameLogic = (() => {
         gameBoard[move.i][move.j] = "O";
 
         gameEnd = _checkWinning(gameBoard);
-        totalTurns++;
 
         if (gameEnd == true) {
             inGame = false;
@@ -177,7 +219,7 @@ const gameLogic = (() => {
 
         console.log(gameBoard);
         return false;
-    }
+    };
 
     function _checkAvail(playerTurn, gameBoard, cell) {
         let check = 0;
@@ -197,29 +239,49 @@ const gameLogic = (() => {
     }
 
     function _checkWinning(gameBoard) {
-        // Checking Sequential Rows
+        let winner = null;
+        
         for (i = 0; i < 3; i++) {
             if (gameBoard[i][0] == gameBoard[i][1] && gameBoard[i][1] == gameBoard[i][2]) {
-                return true;
+                winner = gameBoard[i][0];
+                return winner;
             } 
         }
 
         // Checking Vertical Columns
         for (i = 0; i < 3; i++) {
             if (gameBoard[0][i] == gameBoard[1][i] && gameBoard[1][i] == gameBoard[2][i]) {
-                return true;
+                winner = gameBoard[0][i];
+                return winner;
             } 
         }
 
         // Checking Diagonal 
         if (gameBoard[0][0] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][2]) {
-            return true;
+            winner = gameBoard[0][0];
+            return winner;
         } 
 
         // Checking Diagonal Reverse
         if (gameBoard[0][2] == gameBoard[1][1] && gameBoard[1][1] == gameBoard[2][0]) {
-            return true;
-        } 
+            winner = gameBoard[0][2];
+            return winner;
+        }
+
+        let availCell = 0
+
+        for(i = 0; i < 3; i++) {
+            for(j = 0; j < 3; j++)
+            {
+                if(Number.isInteger(gameBoard[i][j])) {
+                    availCell += gameBoard[i][j]
+                }
+            }
+        }
+
+        if (availCell == 0) {
+            return 'tie'
+        }
 
         return false;
     }
