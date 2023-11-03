@@ -45,9 +45,9 @@ const gameLogic = (() => {
             cell.addEventListener('click', () => {
                 if (gameEnd == false) {
                     if (playerTurn == true) {
-                            markAvail = _checkAvail(playerTurn, gameBoard, cell);
-                            gameEnd = _checkWinning(gameBoard);
-                            console.log(gameEnd);
+                        markAvail = _checkAvail(playerTurn, gameBoard, cell);
+                        gameEnd = _checkWinning(gameBoard);
+                        console.log(gameEnd);
 
                         if (markAvail == true) {
                             cell.textContent = "X";
@@ -86,7 +86,6 @@ const gameLogic = (() => {
                             inGame = false;
                             results.textContent = "It's a Tie!"
                         }
-
                     }
                 }
             }, {once: true});
@@ -102,38 +101,49 @@ const gameLogic = (() => {
         cellblock.forEach((cell => {
             cell.addEventListener('click', () => {
                 if (gameEnd == false) {
-                    if (playerTurn == true) {
-                        markAvail = _checkAvail(playerTurn, gameBoard, cell);
-                        gameEnd = _checkWinning(gameBoard);
+                    markAvail = _checkAvail(playerTurn, gameBoard, cell);
+                    playerMarked = false;
+                    gameEnd = _checkWinning(gameBoard);
 
-                        if (markAvail == true) {
-                            cell.textContent = human;
-                            playerTurn = false;
-                        }
+                    if (markAvail == true) {
+                        cell.textContent = human;
+                        playerMarked = true;
+                    }
 
-                        if (gameEnd == true) {
-                            inGame = false;
-                            player1.playerScore++;
-                            results.textContent = player1.name + " Won The Game!"
-                            _updateScoreBoard(player1, player2)
-                            return gameEnd = true;
-                        }
+                    if (gameEnd == human) {
+                        inGame = false;
+                        player1.playerScore++;
+                        results.textContent = player1.name + " Won The Game!"
+                        _updateScoreBoard(player1, player2)
+                        return gameEnd = true;
+                    }
+                
+                    if (gameEnd == 'tie') {
+                        inGame = false;
+                        results.textContent = "It's a Tie!"
+                        return gameEnd = true;
+                    }
+
+                    // COMPUTER TURN
                     
-                        if (gameEnd == 'tie') {
-                            inGame = false;
-                            results.textContent = "It's a Tie!"
-                            return gameEnd = true;
-                        }
-        
-                        gameEnd = _bestAIMove(gameBoard, computer);
-                        playerTurn = true;
+                    if (playerMarked == true) {
+                        _bestAIMove(gameBoard);
+                        gameEnd = _checkWinning(gameBoard);
+                    }
+
+                    if (gameEnd == ai) {
+                        inGame = false;
+                        computer.playerScore++;
+                        results.textContent = computer.name + " Won The Game!"
+                        _updateScoreBoard(player1, computer)
+                        return true;
                     }
                 }
             }, {once: true});
         }));
     }
 
-    function _bestAIMove(gameBoard, computer) {
+    function _bestAIMove(gameBoard) {
         let bestScore = -99;
         let move;
         for (let i = 0; i < 3; i ++) {
@@ -158,18 +168,8 @@ const gameLogic = (() => {
         }));
 
         gameBoard[move[0]][move[1]] = ai;
-        gameEnd = _checkWinning(gameBoard);
 
-        if (gameEnd == true) {
-            inGame = false;
-            computer.playerScore++;
-            results.textContent = computer.name + " Won The Game!"
-            _updateScoreBoard(player1, computer)
-            return true;
-        }
-
-        console.log(gameBoard);
-        return false;
+        return;
     };
 
     function _minimax(gameBoard, depth, isMaximizing) {
