@@ -144,7 +144,7 @@ const gameLogic = (() => {
     }
 
     function _bestAIMove(gameBoard) {
-        let bestScore = -99;
+        let bestScore = -Infinity;
         let move;
         for (let i = 0; i < 3; i ++) {
             for(let j = 0; j < 3; j++) {
@@ -180,7 +180,7 @@ const gameLogic = (() => {
         }
         
         if (isMaximizing) {
-            let bestScore = 0;
+            let bestScore = -Infinity;
             for (let i = 0; i < 3; i++) {
                 for(let j = 0; j < 3; j++) {
                     if(gameBoard[i][j] != 'X' && gameBoard[i][j] != 'O') { 
@@ -194,7 +194,7 @@ const gameLogic = (() => {
             }
             return bestScore;
         } else {
-            let bestScore = 0;
+            let bestScore = Infinity;
             for (let i = 0; i < 3; i++) {
                 for(let j = 0; j < 3; j++) {
                     if(gameBoard[i][j] != 'X' && gameBoard[i][j] != 'O') { 
