@@ -32,8 +32,9 @@ const gameLogic = (() => {
         }
     }
 
-    let human = 'O';
-    let ai = 'X';
+    let human = 'X';
+    let opponent = 'O'
+    let ai = 'O';
 
     function _startRound(player1, player2, gameBoard) {
         let playerTurn = true;
@@ -51,10 +52,11 @@ const gameLogic = (() => {
 
                         if (markAvail == true) {
                             cell.textContent = "X";
+                            changeColor(cell)
                             playerTurn = false;
                         }
 
-                        if (gameEnd == 'X') {
+                        if (gameEnd == human) {
                             inGame = false;
                             player1.playerScore++;
                             results.textContent = player1.name + " Won The Game!"
@@ -72,10 +74,11 @@ const gameLogic = (() => {
 
                         if (markAvail == true) {
                             cell.textContent = "O";
+                            changeColor(cell)
                             playerTurn = true;
                         }
 
-                        if (gameEnd == 'O') {
+                        if (gameEnd == opponent) {
                             inGame = false;
                             player2.playerScore++;
                             results.textContent = player2.name + " Won The Game!"
@@ -90,6 +93,14 @@ const gameLogic = (() => {
                 }
             }, {once: true});
         }));
+    }
+
+    function changeColor(cell) {
+        if (cell.textContent == 'X') {
+            cell.style.color = '#FB3640';
+        } else if (cell.textContent == 'O'){
+            cell.style.color = '#247BA0';
+        }
     }
 
     function _startRoundAI(player1, computer, gameBoard) {
@@ -107,12 +118,14 @@ const gameLogic = (() => {
 
                     if (markAvail == true) {
                         cell.textContent = human;
+                        changeColor(cell)
                         playerMarked = true;
                     }
 
                     if (gameEnd == human) {
                         inGame = false;
                         player1.playerScore++;
+                        console.log('check');
                         results.textContent = player1.name + " Won The Game!"
                         _updateScoreBoard(player1, player2)
                         return gameEnd = true;
@@ -164,6 +177,7 @@ const gameLogic = (() => {
         cellblock.forEach((cell => {
             if (gameBoard[move[0]][move[1]] == cell.dataset.location) {
                 cell.textContent = ai;
+                changeColor(cell)
             }
         }));
 
@@ -325,7 +339,7 @@ const gameLogic = (() => {
         },
 
         resetGame: function() {
-            _updateScoreBoard(player1, player2)
+            _updateScoreBoard(player1, player2, computer)
             _clearBoard();
         },
 
@@ -334,7 +348,6 @@ const gameLogic = (() => {
         }
     };
 })();
-
 
 startBtn.addEventListener('click', () => {
     if (inGame == false) {
@@ -372,6 +385,7 @@ resetBtn.addEventListener('click', () => {
     inGame = false;
     player1.playerScore = 0;
     player2.playerScore = 0;
+    computer.playerScore = 0
     gameLogic.resetGame();
     gameLogic.triggerPlayerSelect();
 });
